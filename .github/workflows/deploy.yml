@@ -33,9 +33,16 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          else
+            echo "No requirements.txt found, skipping runtime dependency install"
+          fi
+
           if [ -f requirements-dev.txt ]; then
             pip install -r requirements-dev.txt
+          else
+            echo "No requirements-dev.txt found, skipping dev dependency install"
           fi
 
       - name: Run tests
@@ -64,9 +71,19 @@ jobs:
         run: |
           rm -rf package lambda.zip
           mkdir -p package
-          pip install -r requirements.txt -t package/
-          if [ -d src ]; then cp -r src/* package/; fi
+
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt -t package/
+          else
+            echo "No requirements.txt found, packaging code only"
+          fi
+
+          if [ -d src ]; then
+            cp -r src/* package/
+          fi
+
           cp -r *.py package/ 2>/dev/null || true
+
           cd package
           zip -r ../lambda.zip .
 
