@@ -3,7 +3,7 @@ name: Deploy Lambdas
 on:
   push:
     branches:
-      - main
+      - new-branch
     paths:
       - 'test-lambda/**'
       - 'test-lambda2/**'
@@ -85,7 +85,7 @@ jobs:
           fi
 
   deploy:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/new-branch'
     needs: test
     runs-on: ubuntu-latest
     strategy:
